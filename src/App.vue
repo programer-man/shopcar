@@ -1,28 +1,50 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <MyHeader background="orange" color="red" title="刘备草鞋"></MyHeader>
+    <div class="main">
+      <MyGoods v-for="obj in list" :key="obj.id" :obj="obj"></MyGoods>
+    </div>
+    <MyFooter :arr="list"></MyFooter>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import MyHeader from "./components/MyHeader.vue";
+import MyFooter from "./components/MyFooter.vue";
+import MyGoods from "./components/MyGoods.vue";
 export default {
-  name: 'App',
+  data(){
+    return {
+      list:[]
+    }
+  },
   components: {
-    HelloWorld
+    MyHeader,
+    MyFooter,
+    MyGoods,
+  },
+  created(){
+    this.$axios({
+      url: '/api/cart',
+    }).then(res=>{
+      this.list = res.data.list
+      this.list.forEach(obj=>{
+        if(obj.state){
+          obj.state = true
+        }
+        else {
+          obj.state = false
+        }
+      })
+    }).catch(err => {
+      console.log(err)
+    })
   }
-}
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
+  .main {
+    padding: 45px 0 50px 0;
+  }
 </style>
